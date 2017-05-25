@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -33,6 +34,13 @@ app.get('/hola/:name', (req, res)=> {
   res.status(200).send({message: `Hello ${req.params.name}!`})
 });
 
-app.listen(port, () =>{
-  console.log(`API REST running on http://localhost:${port}`);
+mongoose.connect('mongodb://localhost:27017/quotesDB', (err, res) => {
+  if(err) {
+    return console.log(`Error to connect to bbdd: ${err}`);
+  };
+  console.log('Conexion a la bbdd establecida');
+
+  app.listen(port, () =>{
+    console.log(`API REST running on http://localhost:${port}`);
+  })
 })
