@@ -4,22 +4,57 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 
+const Quote = require('./models/quote')
+
 const app = express();
 const port = process.env.PORT || 3001;
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
 app.get('/api/quote',(req, res)=> {
-  res.status(200).send({quotes: []})
+
+  Quote.find({}, (err, quotes) => {
+    if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
+    if(!quotes) return res.status(404).send({message : `No existen productos`})
+
+    res.send(200, { quotes })
+  })
 })
 
 app.get('/api/quote/:quoteId', (req, res) => {
+  let quoteId = req.params.quoteId
 
+  Quote.findById(quoteId, (err, quote) => {
+    if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
+    if(!quote) return res.status(404).send({message : `La frase no existe.`})
+
+    res.status(200).send({ quote })
+  })
 })
 
 app.post('/api/quote', (req, res) => {
+  console.log('POST /api/quote');
   console.log(req.body);
-  res.status(200).send({message: 'Quote received'})
+
+  let quote = new Quote()
+
+  quote.author = req.body.author
+  quote.description = req.body.description
+
+  req.body.tags = req.body.tags.replace(/\s/g, '').split(",").map(function(tag) {
+    return { "name": tag };
+  });
+  console.log(req.body.tags);
+  quote.tags = req.body.tags
+
+  console.log("tags: "+quote.tags);
+
+  quote.save((err, quoteStored) => {
+    if(err) res.status(500).send({message : `Error al guardar en bbddd: ${err}`})
+
+    res.status(200).send({quote : quoteStored})
+
+  })
 })
 
 app.put('/api/quote/:quoteId', (req, res) => {

@@ -4,9 +4,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const QuoteSchema = Schema({
-  autor: String,
+  author: String,
   description: String,
   tags: [
-    { tag: String }
+    { name: String }
   ]
 })
+
+module.exports = mongoose.model('Quote', QuoteSchema)
