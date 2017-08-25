@@ -3,3 +3,9 @@ An simple app to find famous quotes, motivational, etc. Build in Full-Stack Java
 
 This is a test proyect to learn and practice the Full-Stack JavaScript MEAN and the Ionic frameworks.
 
+## License
+MIT
+
+## Author
+[Pablo Martin](https://www.linkedin.com/in/pablomn/)
+
