@@ -1,0 +1,114 @@
+<link rel="import" href="../../lib/bower_components/polymer/polymer.html">
+<link rel="import" href="../../lib/bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../lib/bower_components/image-mask/image-mask.html">
+<link rel="import" href="../../lib/bower_components/paper-card/paper-card.html">
+<link rel='import' href='../../lib/bower_components/paper-toolbar/paper-toolbar.html' />
+<link rel="import" href="../../lib/bower_components/paper-item/all-imports.html">
+<link rel="import" href="../../lib/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../lib/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../lib/bower_components/paper-button/paper-button.html">
+<link rel='import' href='../../lib/bower_components/paper-input/paper-input.html' />
+<link rel='import' href='../../lib/bower_components/paper-dialog/paper-dialog.html' />
+<link rel="import" href="../../lib/bower_components/paper-toast/paper-toast.html">
+<link rel='import' href='../../lib/bower_components/app-layout/app-toolbar/app-toolbar.html'>
+<link rel='import' href='../getQuotes/getQuotes.html'>
+<link rel="stylesheet" href="styles.css">
+
+<dom-module id="my-app">
+    <style>
+        paper-dialog app-toolbar {
+            background-color: #0d47a1;
+            color: #fff;
+        }
+
+        paper-dialog {
+            padding: 0px;
+        }
+        
+        .paper-dialog-0>*:first-child {
+            margin-top: 0px;
+        }
+
+        image-mask {
+            margin-top: 5px;
+        }
+
+        paper-card {
+            --paper-card-header-image: {
+                width: 450px;
+            }
+        }
+
+        paper-card {
+            --paper-card-header-text: {
+                color: white;
+                text-shadow: 2px 2px 2px #000000;
+            }
+            ;
+        }
+
+        paper-card {
+            max-width: 450px;
+            margin: 0px;
+            color: #555555;
+        }
+
+        get-quotes {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+    <template>
+        <app-toolbar id="cabecera">
+            <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
+            <div main-title>Quotes App</div>
+            <paper-icon-button icon="search" id="searchButton"></paper-icon-button>
+        </app-toolbar>
+        <sample-content size="10"></sample-content>
+        <get-quotes></get-quotes>
+        <app-drawer id="drawer" swipe-open>
+            <app-toolbar id="cabecera">
+                <div main-title>Quotes App</div>
+            </app-toolbar>
+            <paper-menu selected="0">
+                <paper-item onclick="drawer.toggle()">Start</paper-item>
+                <paper-item on-click="showAbout">About</paper-item>
+            </paper-menu>
+        </app-drawer>
+        <paper-dialog id='aboutDialog' modal>
+            <app-toolbar>
+                <div main-title>About Me</div>
+                <paper-icon-button icon="close" on-click="closeAbout"></paper-icon-button>
+            </app-toolbar>
+            <div>
+                <paper-card style="--paper-card-header-color: #fff" heading="Pablo Martin" image="http://www.menshealth.es/media/cache/article_middle/upload/images/article/664/article-Cenar-fruta-adelgaza-576abd23df09d.jpg"
+                    alt="Pablo Martin">
+                    <div class="card-content">
+                        Esta app es una webapp desarrollada en Polymer creada simplemente para el aprendizaje de este framework y del aprendizaje de
+                        TypeScript, NodeJs, MongoDB y Express.
+                    </div>
+                    <div class="card-actions">
+                        <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
+                        <paper-icon-button icon="account-circle" onclick=""></paper-icon-button>
+                    </div>
+                </paper-card>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+        Polymer({
+            is: "my-app",
+            showAbout: function () {
+                this.$.aboutDialog.open();
+                this.$.drawer.toggle();
+            },
+            closeAbout: function () {
+                this.$.aboutDialog.close();
+            }
+
+
+        });
+    </script>
+</dom-module>

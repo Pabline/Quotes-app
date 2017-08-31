@@ -1,0 +1,120 @@
+<link rel='import' href='../../lib/bower_components/iron-ajax/iron-ajax.html' />
+
+<dom-module id="get-quotes">
+       <style>
+        paper-dialog app-toolbar {
+            background-color: #0d47a1;
+            color: #000;
+        }
+            
+        .paper-dialog-0>*:first-child {
+            margin-top: 0px;
+        }
+
+        image-mask {
+            margin-top: 5px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 2px;
+            display: inline-block;
+            height: 250px;
+            margin: 1rem;
+            position: relative;
+            width: 300px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            padding: 16px;
+            float: left;
+            text-align: center;
+            color: #37474f;
+            font-family: 'Roboto','Noto', sans-serif;
+            justify-content:center;align-items:center;
+            
+        }
+
+        .card:hover {
+            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+
+        .card-description {
+
+            display: block; /* Fallback for non-webkit */
+            display: -webkit-box;
+            max-width: 400px;
+            height: 20*1*9; /* Fallback for non-webkit */
+            margin: 0 auto;
+            font-size: 20;
+            line-height: 1;
+            -webkit-line-clamp: 9;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: bold;
+        }
+
+        .card-author {
+            padding: 5px;
+            color: #0d47a1;
+        }
+        .card-actions {
+            height: 30px;
+            padding: 3px;
+            text-align: left;
+            position: absolute;
+            bottom: 15px;
+        }
+
+        paper-icon-button.facebook {
+            color: #3b5998;
+        }
+        paper-icon-button.twitter {
+            color: #00aced;
+        }
+
+    </style>
+    <template>
+        <template is="dom-repeat" items="[[quotes]]">
+           <div class="card">
+
+                <div class="card-description">
+                        {{item.description}}
+                    </div>
+                    <div class="card-author">
+                        {{item.author}}
+                </div>
+
+                <div class="card-actions">
+                    <paper-icon-button icon="twitter" onclick="" class="twitter"></paper-icon-button>
+                    <paper-icon-button icon="facebook" onclick="" class="facebook"></paper-icon-button>
+                </div>
+            </div>
+        </template>
+        <iron-ajax
+                id="requestQuotes"
+                url="http://localhost:3001/api/quote"
+                params='{"type":"all"}'
+                handle-as="json"
+                on-response="handleResponse"
+                content-type='json'
+                method='get'></iron-ajax>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'get-quotes',
+            properties: {
+                quotes: {
+                    type: Array
+                }
+            },
+            ready: function () {
+                this.$.requestQuotes.generateRequest();
+            },
+            handleResponse: function (data) {
+                this.quotes = data.detail.response.quotes;
+            }
+        });
+    </script>
+</dom-module>

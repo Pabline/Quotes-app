@@ -1,0 +1,14 @@
+#cabecera {
+    background-color: #0d47a1;
+    color: #fff;
+    font-family: 'Noto', sans-serif;
+}
+
+app-toolbar paper-icon-button {
+    --paper-icon-button-ink-color: black !important;
+}
+body {
+    margin: 0px;
+}
+
+
