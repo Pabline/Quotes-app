@@ -41,9 +41,9 @@ function saveQuote(req, res){
   console.log("tags: "+quote.tags);
 
   quote.save((err, quoteStored) => {
-    if(err) res.status(500).send({message : `Error al guardar en bbddd: ${err}`})
+    if(err) res.status(500).send({message : `Error al guardar en bbddd: ${err}`, code:500})
 
-    res.status(200).send({quote : quoteStored})
+    res.status(200).send({quote : quoteStored, code:200});
 
   })
 
