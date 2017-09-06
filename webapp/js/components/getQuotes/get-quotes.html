@@ -114,6 +114,23 @@
 
         }
 
+        .card-author a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .card-author a {
+            text-decoration: none;
+            cursor: pointer;
+            color: #0d47a1;
+        }
+
+        .card-author a {
+            text-decoration: none;
+            cursor: pointer;
+            color: #0d47a1;
+        }
+
     </style>
     <template>
         <ul id="listQuotes">
@@ -125,7 +142,7 @@
                         {{item.description}}
                     </div>
                     <div class="card-author">
-                        {{item.author}}
+                        <a on-click="getQuotesAuthor">{{item.author}}</a>
                 </div>
 
                <div class="card-actions">
@@ -164,6 +181,10 @@
                 document.addEventListener("refresh", function (evt) {
                    this.ready();
                 }.bind(this))
+            },
+            getQuotesAuthor: function (e) {
+                console.log( e.model.item.author);
+                
             }
         });
     </script>

@@ -8,6 +8,7 @@
 <link rel="import" href="../../lib/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../lib/bower_components/paper-button/paper-button.html">
 <link rel='import' href='../../lib/bower_components/paper-input/paper-input.html' />
+<link rel='import' href='../../lib/bower_components/paper-input/paper-textarea.html' />
 <link rel='import' href='../../lib/bower_components/paper-dialog/paper-dialog.html' />
 <link rel="import" href="../../lib/bower_components/paper-toast/paper-toast.html">
 <link rel='import' href='../../lib/bower_components/app-layout/app-toolbar/app-toolbar.html'>
@@ -130,11 +131,11 @@
                 <div main-title>New Quote</div>
                 <paper-icon-button icon="close" on-click="closeQuoteDialog"></paper-icon-button>
             </app-toolbar>
-            <paper-input label='Author' value='{{ quoteAuthor }}'>
+            <paper-input label='Author' required char-counter maxlength="75" value='{{ quoteAuthor }}'>
             </paper-input>
-            <paper-input label='Quote' value='{{ quoteDescription }}'>
-            </paper-input>
-            <paper-input label='Tags (Separated by commas)' value='{{ quoteTags }}'>
+            <paper-textarea id="quoteDescription" label='Quote' rows="3" required char-counter auto-size  maxlength="250" value='{{ quoteDescription }}' error-message="Quote Description can't be empty!">
+            </paper-textarea>
+            <paper-input label='Tags (Separated by commas)' char-counter maxlength="200" value='{{ quoteTags }}'>
             </paper-input>
             <div class='buttons'>
                 <paper-button raised on-click='addQuote' class='add'>Add</paper-button>
@@ -163,25 +164,37 @@
                 this.quoteTags = "";
             },
             addQuote: function () {
-                var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
-                Ajax.call({
-                    url: "http://172.17.67.179:3001/api/quote",
-                    type: 'POST',
-                    params: params,
-                    success: function (response) {
-                        var jsonResponse = JSON.parse(response);
-                        if(jsonResponse.code==200){
-                            console.log("Error on save...");
-                        }
-                        console.log(jsonResponse);
-                        this.fire("refresh", {});
-                        this.closeQuoteDialog();
+                var author = this.quoteAuthor!=undefined?this.quoteAuthor.trim():undefined;
+                var description = this.quoteDescription!=undefined?this.quoteDescription.trim():undefined;
 
-                    }.bind(this),
-                    error: function (data) {
-                       console.log("Error Ajax");
-                    }
-                });
+                if(author==undefined && author!=""){
+                    this.quoteAuthor = "Anonymous"
+                }
+                console.log("---"+description+"---");
+                if(description!=undefined && description!=""){
+                    var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
+                    Ajax.call({
+                        url: "http://172.17.67.179:3001/api/quote",
+                        type: 'POST',
+                        params: params,
+                        success: function (response) {
+                            var jsonResponse = JSON.parse(response);
+                            if(jsonResponse.code==200){
+                                console.log("Error on save...");
+                            }
+                            console.log(jsonResponse);
+                            this.fire("refresh", {});
+                            this.closeQuoteDialog();
+
+                        }.bind(this),
+                        error: function (data) {
+                            console.log("Error Ajax");
+                        }
+                    });
+                } else {
+                    this.quoteDescription = description;
+                    this.$.quoteDescription.validate();
+                }
 
             }
 

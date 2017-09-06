@@ -16,7 +16,20 @@ function getQuote(req, res){
 function getQuotes(req, res){
   Quote.find({}, (err, quotes) => {
     if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
-    if(!quotes) return res.status(404).send({message : `No existen productos`})
+    if(!quotes) return res.status(404).send({message : `No existen frases`})
+
+    res.send(200, { quotes })
+  })
+
+}
+
+function getQuotesByAuthor(req, res){
+  let authorName = req.params.authorName
+  console.log("\/"+authorName+"\/");
+
+  Quote.find({author: { $eq: authorName}}, (err, quotes) => {
+    if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
+    if(!quotes) return res.status(404).send({message : `No existen frases`})
 
     res.send(200, { quotes })
   })
@@ -80,6 +93,7 @@ function deleteQuote(req, res){
 module.exports = {
   getQuote,
   getQuotes,
+  getQuotesByAuthor,
   saveQuote,
   updateQuote,
   deleteQuote
