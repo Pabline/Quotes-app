@@ -27,7 +27,7 @@ function getQuotesByAuthor(req, res){
   let authorName = req.params.authorName
   console.log("\/"+authorName+"\/");
 
-  Quote.find({author: { $eq: authorName}}, (err, quotes) => {
+  Quote.find({author: { $regex: '.*'+authorName+'.*'}}, (err, quotes) => {
     if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
     if(!quotes) return res.status(404).send({message : `No existen frases`})
 

@@ -13,6 +13,8 @@
 <link rel="import" href="../../lib/bower_components/paper-toast/paper-toast.html">
 <link rel='import' href='../../lib/bower_components/app-layout/app-toolbar/app-toolbar.html'>
 <link rel='import' href='../../lib/bower_components/paper-fab/paper-fab.html'>
+<link rel='import' href='../../lib/bower_components/paper-tabs/paper-tabs.html' />
+<link rel='import' href='../../lib/bower_components/paper-tabs/paper-tab.html' />
 <link rel='import' href='../getQuotes/get-quotes.html'>
 <script src="../../core/ajax.js"></script>
 <link rel="stylesheet" href="styles.css">
@@ -88,12 +90,23 @@
             
         }
 
+        .buttons {
+            margin-top: 12px;
+            padding: 8px;
+            align-content: center;
+        }
+        .search {
+            width: 100%;
+            background-color: #0d47a1;
+            color: white;
+        }
+
     </style>
     <template>
         <app-toolbar id="cabecera">
             <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
             <div main-title>Quotes App</div>
-            <paper-icon-button icon="search" id="searchButton"></paper-icon-button>
+            <paper-icon-button icon="search" id="searchButton" on-click="searchQuoteDialog"></paper-icon-button>
         </app-toolbar>
         <sample-content size="10"></sample-content>
         <get-quotes id="getQuotes"></get-quotes>
@@ -103,7 +116,7 @@
                 <div main-title>Quotes App</div>
             </app-toolbar>
             <paper-menu selected="0">
-                <paper-item onclick="drawer.toggle()">Start</paper-item>
+                <paper-item on-click="showHome">Start</paper-item>
                 <paper-item on-click="showAbout">About</paper-item>
             </paper-menu>
         </app-drawer>
@@ -126,7 +139,7 @@
                 </paper-card>
             </div>
         </paper-dialog>
-         <paper-dialog id='addQuoteDialog' modal>
+        <paper-dialog id='addQuoteDialog' modal>
             <app-toolbar>
                 <div main-title>New Quote</div>
                 <paper-icon-button icon="close" on-click="closeQuoteDialog"></paper-icon-button>
@@ -140,6 +153,22 @@
             <div class='buttons'>
                 <paper-button raised on-click='addQuote' class='add'>Add</paper-button>
                 <paper-button raised on-click='closeQuoteDialog' class='cancel'>Cancel</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id='searchQuoteDialog' modal>
+            <app-toolbar>
+                <div main-title>Search Quote by...</div>
+                <paper-icon-button icon="close" on-click="closeSearchDialog"></paper-icon-button>
+            </app-toolbar>
+            <paper-tabs selected="0">
+                <paper-tab>Author</paper-tab>
+                <paper-tab>Description</paper-tab>
+                <paper-tab>Tag</paper-tab>
+            </paper-tabs>
+            <paper-textarea id="searchText" label='Search' rows="2" required char-counter auto-size  maxlength="100" value='{{ searchText }}' error-message="Search Text can't be empty!">
+            </paper-textarea>
+            <div class='buttons'>
+                <paper-button raised on-click='search' class='search'>Search</paper-button>
             </div>
          </paper-dialog>
     </template>
@@ -170,7 +199,7 @@
                 if(author==undefined && author!=""){
                     this.quoteAuthor = "Anonymous"
                 }
-                console.log("---"+description+"---");
+                
                 if(description!=undefined && description!=""){
                     var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
                     Ajax.call({
@@ -180,9 +209,9 @@
                         success: function (response) {
                             var jsonResponse = JSON.parse(response);
                             if(jsonResponse.code==200){
-                                console.log("Error on save...");
+                                console.error("Error on save...");
                             }
-                            console.log(jsonResponse);
+                           
                             this.fire("refresh", {});
                             this.closeQuoteDialog();
 
@@ -196,6 +225,17 @@
                     this.$.quoteDescription.validate();
                 }
 
+            },
+            showHome : function(){
+                drawer.toggle()
+                this.fire("refresh", {});
+            },
+            searchQuoteDialog: function () {
+                this.$.searchQuoteDialog.open();
+            },
+            closeSearchDialog: function () {
+                this.$.searchQuoteDialog.close();
+                this.searchText = "";
             }
 
 

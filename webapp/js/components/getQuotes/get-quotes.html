@@ -181,10 +181,29 @@
                 document.addEventListener("refresh", function (evt) {
                    this.ready();
                 }.bind(this))
+
+                document.addEventListener("search", function (evt) {
+                    
+                    var searchBy = evt.detail.searchBy;  
+                    
+                    
+
+                }.bind(this))
             },
             getQuotesAuthor: function (e) {
-                console.log( e.model.item.author);
-                
+                var author = e.model.item.author;
+                 Ajax.call({
+                    url: "http://172.17.67.179:3001/api/quote/author/"+author,
+                    type: 'GET',
+                    params: '{"type":"all"}',
+                    success: function (response) {
+                        var jsonResponse = JSON.parse(response);
+                        this.quotes=jsonResponse.quotes;
+                    }.bind(this),
+                    error: function (data) {
+                       console.eror("Error Ajax");
+                    }
+                });
             }
         });
     </script>
