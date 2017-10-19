@@ -17,6 +17,19 @@
 <link rel='import' href='../../lib/bower_components/paper-tabs/paper-tab.html' />
 <link rel='import' href='../getQuotes/get-quotes.html'>
 <script src="../../core/ajax.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+<script>
+
+     var config = {
+            apiKey: "AIzaSyAdqfDeEa7nHriN0SJ5XF4mVSRytQMV5Zg",
+            authDomain: "quotes-app-6c868.firebaseapp.com",
+            databaseURL: "https://quotes-app-6c868.firebaseio.com",
+            projectId: "quotes-app-6c868",
+            storageBucket: "quotes-app-6c868.appspot.com",
+            messagingSenderId: "1030604347868"
+        };
+        this.firebase.initializeApp(config);
+</script>
 <link rel="stylesheet" href="styles.css">
 
 <dom-module id="my-app">
@@ -53,7 +66,7 @@
         }
 
         paper-card {
-            max-width: 450px;
+            max-width: 250px;
             margin: 0px;
             color: #555555;
         }
@@ -69,6 +82,7 @@
             position: fixed;
             right: 15px;
             bottom: 15px;
+            display: none;
         }
         paper-fab.label {
             font-size: 20px;
@@ -101,16 +115,28 @@
             color: white;
         }
 
+        .circular {
+         border-radius: 50%;
+        }
+
+        #userDialogContent {
+            text-align: center;
+        }
+
+        #exitApp {
+            color: #e53935;
+        }
     </style>
     <template>
         <app-toolbar id="cabecera">
             <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
             <div main-title>Quotes App</div>
             <paper-icon-button icon="search" id="searchButton" on-click="searchQuoteDialog"></paper-icon-button>
+            <paper-icon-button icon="account-circle" id="loginButton" on-click="loginWithGoogle"></paper-icon-button>
         </app-toolbar>
         <sample-content size="10"></sample-content>
         <get-quotes id="getQuotes"></get-quotes>
-        <paper-fab icon="add" title="Add" on-click="addQuoteDialog"></paper-fab>
+        <paper-fab id="paperFab" icon="add" title="Add" on-click="addQuoteDialog"></paper-fab>
         <app-drawer id="drawer" swipe-open>
             <app-toolbar id="cabecera">
                 <div main-title>Quotes App</div>
@@ -136,6 +162,23 @@
                         <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
                         <paper-icon-button icon="account-circle" onclick=""></paper-icon-button>
                     </div>
+                </paper-card>
+            </div>
+        </paper-dialog>
+        <paper-dialog id='userDialog' modal>
+            <app-toolbar>
+                <div main-title>{{ user.displayName }}</div>
+                <paper-icon-button icon="close" on-click="closeUserDialog"></paper-icon-button>
+            </app-toolbar>
+            <div id="userDialogContent">
+                <img class="circular" src='{{ user.photoURL }}' width="250px" height="250px"/>
+                <h3>{{ user.displayName }}</h3>        
+                <h5>{{ user.email }}</h5>
+                    
+                <div class="card-actions">
+                    <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
+                    <paper-icon-button id="exitApp" icon="exit-to-app" on-click="logOutGoogle"></paper-icon-button>
+                </div>
                 </paper-card>
             </div>
         </paper-dialog>
@@ -171,17 +214,42 @@
                 <paper-button raised on-click='search' class='search'>Search</paper-button>
             </div>
          </paper-dialog>
+        <paper-dialog id='searchQuoteDialog' modal>
+
+        </paper-dialog>
     </template>
 
     <script>
         Polymer({
             is: "my-app",
+            properties: {
+                user: {
+                    value: null
+                }
+            },
+            attached: function () {
+                 firebase.auth().onAuthStateChanged(user => {
+                    this.user = user;
+                    if(this.user!=null){
+                        document.getElementById("paperFab").style.display = "block";
+                    }else{
+                        document.getElementById("paperFab").style.display = "none";
+                    }
+                 })
+
+             },
             showAbout: function () {
                 this.$.aboutDialog.open();
                 this.$.drawer.toggle();
             },
             closeAbout: function () {
                 this.$.aboutDialog.close();
+            },
+            showUserDialog: function () {
+                this.$.userDialog.open();
+            },
+            closeUserDialog: function () {
+                this.$.userDialog.close();
             },
             addQuoteDialog: function () {
                 this.$.addQuoteDialog.open();
@@ -203,7 +271,7 @@
                 if(description!=undefined && description!=""){
                     var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
                     Ajax.call({
-                        url: "http://172.17.67.179:3001/api/quote",
+                        url: "http://localhost:3001/api/quote",
                         type: 'POST',
                         params: params,
                         success: function (response) {
@@ -232,6 +300,36 @@
             },
             searchQuoteDialog: function () {
                 this.$.searchQuoteDialog.open();
+            },
+            loginWithGoogle: function () {
+                if(this.user!=null){
+                    console.log(this.user);
+                    this.showUserDialog();
+                }else{
+                    var provider = new firebase.auth.GoogleAuthProvider();
+
+                    firebase.auth().signInWithPopup(provider).then(function(result) {
+                        
+                        this.token = result.credential.accessToken;
+                        this.user = result.user;
+
+                    }).catch(function(error) {
+                            var errorCode = error.code;
+                            var errorMessage = error.message;
+                            var email = error.email;
+                            var credential = error.credential;
+                            console.error("Ocurrió un error al Loguear en la página::"+errorCode+"::"+errorMessage);
+
+                    });
+                }
+            },
+            logOutGoogle: function () {
+                firebase.auth().signOut().then(function() {
+                    console.log("Sesion cerrada.");
+                    this.closeUserDialog();
+                }.bind(this)).catch(function(error) {
+                    this.error("Error al cerrar sesion:: "+error);
+                }); 
             },
             closeSearchDialog: function () {
                 this.$.searchQuoteDialog.close();

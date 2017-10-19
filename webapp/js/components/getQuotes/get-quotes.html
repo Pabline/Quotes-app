@@ -164,18 +164,13 @@
                 }
             },
             ready: function () {
-                 Ajax.call({
-                    url: "http://172.17.67.179:3001/api/quote",
-                    type: 'GET',
-                    params: '{"type":"all"}',
-                    success: function (response) {
-                        var jsonResponse = JSON.parse(response);
-                        this.quotes=jsonResponse.quotes;
-                    }.bind(this),
-                    error: function (data) {
-                       console.log("Error Ajax");
-                    }
-                });
+                fetch("http://localhost:3001/api/quote")
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(jsonResponse){
+                    this.quotes=jsonResponse.quotes;
+                }.bind(this))
             },
             attached: function () {
                 document.addEventListener("refresh", function (evt) {
@@ -186,24 +181,18 @@
                     
                     var searchBy = evt.detail.searchBy;  
                     
-                    
-
                 }.bind(this))
             },
             getQuotesAuthor: function (e) {
                 var author = e.model.item.author;
-                 Ajax.call({
-                    url: "http://172.17.67.179:3001/api/quote/author/"+author,
-                    type: 'GET',
-                    params: '{"type":"all"}',
-                    success: function (response) {
-                        var jsonResponse = JSON.parse(response);
-                        this.quotes=jsonResponse.quotes;
-                    }.bind(this),
-                    error: function (data) {
-                       console.eror("Error Ajax");
-                    }
-                });
+
+                fetch("http://localhost:3001/api/quote/author/"+author)
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(jsonResponse){
+                    this.quotes=jsonResponse.quotes;
+                }.bind(this))
             }
         });
     </script>
