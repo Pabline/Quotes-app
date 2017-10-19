@@ -20,7 +20,7 @@
         .card {
             background: #fff;
             border-radius: 2px;
-            height: 250px;
+            height: 280px;
             min-width: 200px;
             position: relative;
             width: 100%;
@@ -131,13 +131,20 @@
             color: #0d47a1;
         }
 
+        .delete {
+            float: right;
+            color: tomato;
+        }
     </style>
     <template>
         <ul id="listQuotes">
         <template is="dom-repeat" items="[[quotes]]">
            <li>
                <div class="card">
-
+                <template is="dom-if" if="{{ isAdmin }}">
+                   
+                    <paper-icon-button icon="close" on-click="deleteQuote" class="delete"></paper-icon-button>
+                </template>
                 <div class="card-description">
                         {{item.description}}
                     </div>
@@ -161,20 +168,29 @@
             properties: {
                 quotes: {
                     type: Array
+                },
+                isAdmin: {
+                    type: Boolean,
+                    value: false
                 }
             },
             ready: function () {
-                fetch("http://localhost:3001/api/quote")
+                fetch("http://172.17.67.179:3001/api/quote")
                 .then(function(response){
                     return response.json();
                 })
                 .then(function(jsonResponse){
-                    this.quotes=jsonResponse.quotes;
+                    var quotesReverse = jsonResponse.quotes.reverse();
+                    this.quotes=quotesReverse;
                 }.bind(this))
             },
             attached: function () {
                 document.addEventListener("refresh", function (evt) {
                    this.ready();
+                }.bind(this))
+
+                document.addEventListener("isAdmin", function (evt) {
+                   this.isAdmin = evt.detail.isAdmin;
                 }.bind(this))
 
                 document.addEventListener("search", function (evt) {
@@ -186,13 +202,30 @@
             getQuotesAuthor: function (e) {
                 var author = e.model.item.author;
 
-                fetch("http://localhost:3001/api/quote/author/"+author)
+                fetch("http://172.17.67.179:3001/api/quote/author/"+author )
                 .then(function(response){
                     return response.json();
                 })
                 .then(function(jsonResponse){
                     this.quotes=jsonResponse.quotes;
                 }.bind(this))
+            },
+            deleteQuote: function (e) {
+
+                var myInit = { method: 'DELETE',
+                mode: 'cors',
+                cache: 'default' };
+
+                var quoteId = e.model.dataHost.dataHost.item._id;
+                fetch("http://172.17.67.179:3001/api/quote/" + quoteId, myInit)
+                .then(response =>
+                    response.json().then(json => {
+                        console.log(json);
+                    this.ready();
+                    return json;
+                    })
+                );
+                
             }
         });
     </script>

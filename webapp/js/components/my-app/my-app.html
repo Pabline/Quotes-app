@@ -66,9 +66,14 @@
         }
 
         paper-card {
-            max-width: 250px;
+            max-width: 400px;
             margin: 0px;
             color: #555555;
+        }
+
+        #userDialog {
+            width: 300px;
+
         }
 
         #getQuotes {
@@ -89,7 +94,7 @@
 
         }
 
-        paper-button.cancel {
+        paper-button.cancel paper-button#register {
             background-color: #e53935;
             color: white;
         }
@@ -98,6 +103,17 @@
             background-color: #0d47a1;
             color: white;
         }
+
+        #register {
+            background-color: #e53935;
+            color: white;
+        }
+
+        #login  {
+            background-color: #0d47a1;
+            color: white;
+        }
+        
 
         #addQuoteDialog {
             width: 80%;
@@ -121,18 +137,39 @@
 
         #userDialogContent {
             text-align: center;
+            padding: 10px;
         }
 
         #exitApp {
             color: #e53935;
         }
+
+        #googleButton {
+            width: 100%;
+            color: #FFFFFF;
+            background-color: #4885ed;
+        }
+
+        #userInfo {
+            margin-top: 0px;
+        }
+
+        #buscador {
+            height: 43px;
+        }
+
+        #buscador paper-input {
+            width: 100%;
+        }
     </style>
     <template>
         <app-toolbar id="cabecera">
             <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
-            <div main-title>Quotes App</div>
-            <paper-icon-button icon="search" id="searchButton" on-click="searchQuoteDialog"></paper-icon-button>
-            <paper-icon-button icon="account-circle" id="loginButton" on-click="loginWithGoogle"></paper-icon-button>
+            <div main-title on-click="showHome">Quotes App</div>
+            <paper-icon-button icon="account-circle" id="loginButton" on-click="showUserDialog"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar id="buscador">
+             <paper-input id="searchQuote" label='Search Quote...' maxlength="75" value=''></paper-input>
         </app-toolbar>
         <sample-content size="10"></sample-content>
         <get-quotes id="getQuotes"></get-quotes>
@@ -156,7 +193,7 @@
                     alt="Pablo Martin">
                     <div class="card-content">
                         Esta app es una webapp desarrollada en Polymer creada simplemente para el aprendizaje de este framework y del aprendizaje de
-                        TypeScript, NodeJs, MongoDB y Express.
+                        TypeScript, Polymer, NodeJs, MongoDB y Express.
                     </div>
                     <div class="card-actions">
                         <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
@@ -166,21 +203,35 @@
             </div>
         </paper-dialog>
         <paper-dialog id='userDialog' modal>
-            <app-toolbar>
-                <div main-title>{{ user.displayName }}</div>
-                <paper-icon-button icon="close" on-click="closeUserDialog"></paper-icon-button>
-            </app-toolbar>
-            <div id="userDialogContent">
-                <img class="circular" src='{{ user.photoURL }}' width="250px" height="250px"/>
-                <h3>{{ user.displayName }}</h3>        
-                <h5>{{ user.email }}</h5>
-                    
-                <div class="card-actions">
-                    <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
-                    <paper-icon-button id="exitApp" icon="exit-to-app" on-click="logOutGoogle"></paper-icon-button>
+            <template is="dom-if" if="{{ !logged }}">
+                <app-toolbar>
+                    <div main-title>LogIn</div>
+                    <paper-icon-button icon="close" on-click="closeUserDialog"></paper-icon-button>
+                </app-toolbar>
+                <div id="userDialogContent">
+                    <paper-button raised id="googleButton" on-click="loginWithGoogle"><iron-icon id="googleIcon" icon="google-icon"></iron-icon>Google</paper-button>
+                    <paper-input label='Email' char-counter maxlength="200" value=''></paper-input>
+                    <paper-input label='Password' type="password" value=''></paper-input>
+                    <paper-button raised id="register">Register</paper-button>
+                    <paper-button raised id="login">Login</paper-button>
                 </div>
-                </paper-card>
-            </div>
+            </template>
+            <template is="dom-if" if="{{ logged }}">
+                <app-toolbar id="userInfo">
+                    <div main-title>{{ user.displayName }}</div>
+                    <paper-icon-button icon="close" on-click="closeUserDialog"></paper-icon-button>
+                </app-toolbar>
+                <div id="userDialogContent">
+                    <img class="circular" src='{{ user.photoURL }}' width="250px" height="250px"/>
+                    <h3>{{ user.displayName }}</h3>        
+                    <h5>{{ user.email }}</h5>
+                        
+                    <div class="card-actions">
+                        <paper-icon-button icon="view-module" onclick=""></paper-icon-button>
+                        <paper-icon-button id="exitApp" alt="LogOut"icon="exit-to-app" on-click="logOutGoogle"></paper-icon-button>
+                    </div>
+                </div>
+            </template>
         </paper-dialog>
         <paper-dialog id='addQuoteDialog' modal>
             <app-toolbar>
@@ -198,25 +249,6 @@
                 <paper-button raised on-click='closeQuoteDialog' class='cancel'>Cancel</paper-button>
             </div>
         </paper-dialog>
-        <paper-dialog id='searchQuoteDialog' modal>
-            <app-toolbar>
-                <div main-title>Search Quote by...</div>
-                <paper-icon-button icon="close" on-click="closeSearchDialog"></paper-icon-button>
-            </app-toolbar>
-            <paper-tabs selected="0">
-                <paper-tab>Author</paper-tab>
-                <paper-tab>Description</paper-tab>
-                <paper-tab>Tag</paper-tab>
-            </paper-tabs>
-            <paper-textarea id="searchText" label='Search' rows="2" required char-counter auto-size  maxlength="100" value='{{ searchText }}' error-message="Search Text can't be empty!">
-            </paper-textarea>
-            <div class='buttons'>
-                <paper-button raised on-click='search' class='search'>Search</paper-button>
-            </div>
-         </paper-dialog>
-        <paper-dialog id='searchQuoteDialog' modal>
-
-        </paper-dialog>
     </template>
 
     <script>
@@ -225,6 +257,9 @@
             properties: {
                 user: {
                     value: null
+                },
+                logged: {
+                    value: false
                 }
             },
             attached: function () {
@@ -232,10 +267,27 @@
                     this.user = user;
                     if(this.user!=null){
                         document.getElementById("paperFab").style.display = "block";
+                        this.logged = true;
+                        if(this.user.uid == "CUj7qv8PmxPp9T3k0Ymr0a0DlBB2"){
+                            this.fire("isAdmin", { isAdmin: true });
+                        }
                     }else{
+                        this.logged = false;
                         document.getElementById("paperFab").style.display = "none";
+                        this.fire("isAdmin", { isAdmin: false });
                     }
                  })
+
+                searchQuote.addEventListener('keypress', function(e) {
+                    var key = e.keyCode;
+                    console.log("KEY: "+key)
+                    if(key==13){
+                        console.log(e.srcElement.value);
+                    }
+                    if(key==8){
+                        console.log(e.srcElement.value);
+                    }
+                });
 
              },
             showAbout: function () {
@@ -271,7 +323,7 @@
                 if(description!=undefined && description!=""){
                     var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
                     Ajax.call({
-                        url: "http://localhost:3001/api/quote",
+                        url: "http://172.17.67.179:3001/api/quote",
                         type: 'POST',
                         params: params,
                         success: function (response) {
@@ -298,12 +350,8 @@
                 drawer.toggle()
                 this.fire("refresh", {});
             },
-            searchQuoteDialog: function () {
-                this.$.searchQuoteDialog.open();
-            },
             loginWithGoogle: function () {
                 if(this.user!=null){
-                    console.log(this.user);
                     this.showUserDialog();
                 }else{
                     var provider = new firebase.auth.GoogleAuthProvider();
@@ -331,12 +379,6 @@
                     this.error("Error al cerrar sesion:: "+error);
                 }); 
             },
-            closeSearchDialog: function () {
-                this.$.searchQuoteDialog.close();
-                this.searchText = "";
-            }
-
-
         });
     </script>
 </dom-module>
