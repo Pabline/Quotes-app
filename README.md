@@ -5,7 +5,7 @@ This is a test proyect to learn and practice the Full-Stack JavaScript MEPN (Mon
 
 ![alt text](https://github.com/Pabline/Quotes-app/blob/master/webapp/images/globalApp.png "Global APP image")
 
-You can LogIn qith Google Account (Firebase) to add quotes to de database. You can also search for phrases previously added by other users.
+You can LogIn with Google Account (Firebase) to add quotes to de database. You can also search for phrases previously added by other users.
 
 ![alt text](https://github.com/Pabline/Quotes-app/blob/master/webapp/images/logIn.png "LogIn image")
 
