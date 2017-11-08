@@ -12,7 +12,7 @@ You can LogIn qith Google Account (Firebase) to add quotes to de database. You c
 ![alt text](https://github.com/Pabline/Quotes-app/blob/master/webapp/images/addQuote.png "Add Quote image")
 
 
-##Install
+## Install
 - Clone repo
 - **npm install**
 - Inside /webapp/js/lib -> **bower install**
