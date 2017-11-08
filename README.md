@@ -17,7 +17,7 @@ You can LogIn qith Google Account (Firebase) to add quotes to de database. You c
 - **npm install**
 - Inside /webapp/js/lib -> **bower install**
 - Configure the connection to your MongoDB database and the port to the REST API in **config.js**
-- Configure the **Firebase** API in /webapp/js/components/my-app/FirebaseAuth.js 
+- Configure the **Firebase** API in /webapp/js/components/my-app/my-app.js
 - Run webapp client in /webapp
 - Enjoy! ;)
 
