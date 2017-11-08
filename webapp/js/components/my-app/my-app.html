@@ -169,7 +169,7 @@
             <paper-icon-button icon="account-circle" id="loginButton" on-click="showUserDialog"></paper-icon-button>
         </app-toolbar>
         <app-toolbar id="buscador">
-             <paper-input id="searchQuote" label='Search Quote...' maxlength="75" value=''></paper-input>
+             <paper-input id="searchQuote" label='Search Quote...' on-value-changed="_onSearchTermChanged" maxlength="75" value=''></paper-input>
         </app-toolbar>
         <sample-content size="10"></sample-content>
         <get-quotes id="getQuotes"></get-quotes>
@@ -278,17 +278,9 @@
                     }
                  })
 
-                searchQuote.addEventListener('keypress', function(e) {
-                    var key = e.keyCode;
-                    console.log("KEY: "+key)
-                    if(key==13){
-                        console.log(e.srcElement.value);
-                    }
-                    if(key==8){
-                        console.log(e.srcElement.value);
-                    }
-                });
-
+             },
+             _onSearchTermChanged: function(event){
+                this.fire("search", event.detail.value);
              },
             showAbout: function () {
                 this.$.aboutDialog.open();

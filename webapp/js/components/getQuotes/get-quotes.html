@@ -45,6 +45,7 @@
             display: block; /* Fallback for non-webkit */
             display: -webkit-box;
             max-width: 400px;
+            max-height: 230px;
             height: 20*1*9; /* Fallback for non-webkit */
             margin: auto;
             font-size: 20;
@@ -69,6 +70,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             margin-top: 10px;
+            margin-bottom: 15px;
             padding: 5px;
             color: #0d47a1;
         }
@@ -194,10 +196,35 @@
                 }.bind(this))
 
                 document.addEventListener("search", function (evt) {
-                    
-                    var searchBy = evt.detail.searchBy;  
+
+                    if(evt.detail!="")
+                        this.getQuotesAll(evt);
+                    else
+                        this.ready();
                     
                 }.bind(this))
+            },
+            getQuotesDesc: function(evt){
+                let searchTerm = evt.detail;
+
+                    fetch("http://172.17.67.179:3001/api/quote/description/"+searchTerm )
+                    .then(function(response){
+                        return response.json();
+                    })
+                    .then(function(jsonResponse){
+                        this.quotes=jsonResponse.quotes;
+                    }.bind(this))
+            },
+            getQuotesAll: function(evt){
+                let searchTerm = evt.detail;
+
+                    fetch("http://172.17.67.179:3001/api/quote/all/"+searchTerm )
+                    .then(function(response){
+                        return response.json();
+                    })
+                    .then(function(jsonResponse){
+                        this.quotes=jsonResponse.quotes;
+                    }.bind(this))
             },
             getQuotesAuthor: function (e) {
                 var author = e.model.item.author;

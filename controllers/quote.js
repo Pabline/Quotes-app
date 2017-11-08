@@ -36,6 +36,32 @@ function getQuotesByAuthor(req, res){
 
 }
 
+function getQuotesByDesc(req, res){
+  let description = req.params.description
+  console.log("\/"+description+"\/");
+
+  Quote.find({description: { $regex: '.*'+description+'.*'}}, (err, quotes) => {
+    if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
+    if(!quotes) return res.status(404).send({message : `No existen frases`})
+  
+    res.send(200, { quotes })
+  })
+
+}
+
+function getQuotesByAll(req, res){
+  let text = req.params.text
+  console.log("\/"+text+"\/");
+
+  Quote.find( { $or: [ { description: { $regex: '.*'+text+'.*'}},{author: { $regex: '.*'+text+'.*'}} ] }, (err, quotes) => {
+    if(err) return res.status(500).send({message : `Error al realizar la peticion: ${err}`})
+    if(!quotes) return res.status(404).send({message : `No existen frases`})
+    quotes.reverse()
+    res.send(200, { quotes })
+  })
+
+}
+
 function saveQuote(req, res){
   console.log('POST /api/quote');
   console.log(req.body);
@@ -93,7 +119,9 @@ function deleteQuote(req, res){
 module.exports = {
   getQuote,
   getQuotes,
+  getQuotesByDesc,
   getQuotesByAuthor,
+  getQuotesByAll,
   saveQuote,
   updateQuote,
   deleteQuote
