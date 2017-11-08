@@ -315,7 +315,7 @@
                 if(description!=undefined && description!=""){
                     var params = "author=" + this.quoteAuthor + "&description=" + this.quoteDescription +"&tags=" + this.quoteTags;
                     Ajax.call({
-                        url: "http://172.17.67.179:3001/api/quote",
+                        url: "http://localhost:3001/api/quote",
                         type: 'POST',
                         params: params,
                         success: function (response) {
