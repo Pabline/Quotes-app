@@ -1,7 +1,7 @@
 # Quotes-app
-An simple app to find famous quotes, motivational, etc. Build in Full-Stack JavaScript envrioment. MEPN & Ionic?ReactNative.
+An simple app to find famous quotes, motivational, etc. Build in Full-Stack JavaScript envrioment.
 
-This is a test proyect to learn and practice the Full-Stack JavaScript MEPN (MongoDb, Express, Polymer, NodeJs) and the Ionic/React-Native frameworks.
+This is a test proyect to learn and practice the Full-Stack JavaScript MEPN (MongoDb, Express, Polymer, NodeJs).
 
 ![alt text](https://github.com/Pabline/Quotes-app/blob/master/webapp/images/globalApp.png "Global APP image")
 
